@@ -5,20 +5,31 @@ const mongoose = require("mongoose");
 exports.requestChat = async (req, res) => {
   try {
     const { uid } = res.locals.user;
-    const user = await User({ userId: uid });
+    const user = await User.findOne({ userId: uid });
     const newChat = await ChatRequest.findOne({ requestType: "random-chat" });
-    if (newChat.currentUser) {
-      const chattingUser = newChat.currentUser;
+    const isCurrentUserInPreviousChats = user.previousChats.includes(
+      newChat.currentUser
+    );
+    if (
+      newChat.currentUser &&
+      newChat.currentUser.toString() != user._id.toString() &&
+      !isCurrentUserInPreviousChats
+    ) {
+      const chattingUser = await User.findById(newChat.currentUser);
       await ChatRequest.findOneAndUpdate(
         { requestType: "random-chat" },
         { currentUser: null }
       );
+      user.previousChats.push(chattingUser._id);
+      await user.save();
+      chattingUser.previousChats.push(user._id);
+      await chattingUser.save();
       // start chat with chattingUser
       // we have to send fcm notification to stop loading and start chat
 
       return res
         .status(200)
-        .json({ message: `Chat started with ${chattingUser}` });
+        .json({ message: `Chat started with ${chattingUser.email}` });
     } else {
       await ChatRequest.findOneAndUpdate(
         { requestType: "random-chat" },
