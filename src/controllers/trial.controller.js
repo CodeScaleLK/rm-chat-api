@@ -1,7 +1,5 @@
 const { OPENAI_API_KEY, GPT_MODEL } = require("../configs/server");
-const ChatRequest = require("../models/chatRequest.model");
 const TrialUser = require("../models/trialUser.model");
-const User = require("../models/user.model");
 const mongoose = require("mongoose");
 const { Configuration, OpenAIApi } = require("openai");
 
