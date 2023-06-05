@@ -51,7 +51,7 @@ exports.sendMessage = async (req, res) => {
     const { uid } = res.locals.user;
     const sender = await User.findOne({ userId: uid });
     const receiver = await User.findById(sender.currentChat);
-    const { message } = req.body.message;
+    const { message } = req.body;
     sendMessage(sender, receiver, message);
   } catch (e) {
     return res.status(400).json({ message: e.message });
