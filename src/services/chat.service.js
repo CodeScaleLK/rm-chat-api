@@ -16,4 +16,20 @@ async function startChat(user) {
   }
 }
 
-module.exports = startChat;
+async function sendMessage(sender, receiver, text) {
+  try {
+    const message = {
+      data: {
+        senderId: sender._id.toString(),
+        sender: sender.email,
+        message: text,
+      },
+      token: receiver.deviceToken,
+    };
+    const response = await admin.messaging().send(message);
+    console.log(response);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+}
+module.exports = { startChat, sendMessage };

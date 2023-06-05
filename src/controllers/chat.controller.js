@@ -1,7 +1,7 @@
 const ChatRequest = require("../models/chatRequest.model");
 const User = require("../models/user.model");
 const mongoose = require("mongoose");
-const startChat = require("../services/startChat.service");
+const { startChat, sendMessage } = require("../services/chat.service");
 
 exports.requestChat = async (req, res) => {
   try {
@@ -48,7 +48,11 @@ exports.requestChat = async (req, res) => {
 
 exports.sendMessage = async (req, res) => {
   try {
-    //sed messages with fcm
+    const { uid } = res.locals.user;
+    const sender = await User.findOne({ userId: uid });
+    const receiver = await User.findById(sender.currentChat);
+    const { message } = req.body.message;
+    sendMessage(sender, receiver, message);
   } catch (e) {
     return res.status(400).json({ message: e.message });
   }
