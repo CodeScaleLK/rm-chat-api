@@ -1,6 +1,7 @@
 const ChatRequest = require("../models/chatRequest.model");
 const User = require("../models/user.model");
 const mongoose = require("mongoose");
+const startChat = require("../services/startChat.service");
 
 exports.requestChat = async (req, res) => {
   try {
@@ -21,12 +22,13 @@ exports.requestChat = async (req, res) => {
         { currentUser: null }
       );
       user.previousChats.push(chattingUser._id);
+      user.currentChat = chattingUser._id;
       await user.save();
       chattingUser.previousChats.push(user._id);
+      chattingUser.currentChat = user._id;
       await chattingUser.save();
-      // start chat with chattingUser
-      // we have to send fcm notification to stop loading and start chat
-
+      startChat(user);
+      startChat(chattingUser);
       return res
         .status(200)
         .json({ message: `Chat started with ${chattingUser.email}` });
