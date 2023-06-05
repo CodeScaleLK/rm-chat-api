@@ -13,6 +13,7 @@ async function authMiddleware(req, res, next) {
     }
     return res.json({ message: "Unauthorized" });
   } catch (e) {
+    console.log(e.message);
     return res.json({ message: "Internal Error" });
   }
 }
