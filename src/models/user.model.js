@@ -18,6 +18,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  jwtUpdated: {
+    type: Date,
+    required: false,
+  },
   previousChats: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   currentChat: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
