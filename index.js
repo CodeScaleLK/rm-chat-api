@@ -1,5 +1,7 @@
 require("dotenv").config();
 require("./src/services/updateChatList");
+const fs = require("fs");
+const https = require("https");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -31,10 +33,17 @@ async function main() {
   await mongoose.connect(MONGO_URL);
 }
 
-app.use("/auth", authMiddleware, authRoutes);
+app.use("/auth", authRoutes);
 app.use("/trial", trialRoutes);
 app.use("/chat", authMiddleware, chatRoutes);
 
 app.listen(port, () => {
   console.log(`server started in port ${port}`);
 });
+
+// const options = {
+//   cert: fs.readFileSync("/etc/letsencrypt/live/rm.codescale.cc/fullchain.pem"),
+//   key: fs.readFileSync("/etc/letsencrypt/live/rm.codescale.cc/privkey.pem"),
+// };
+
+// https.createServer(options, app).listen(443);
